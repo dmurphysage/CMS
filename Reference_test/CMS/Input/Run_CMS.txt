@@ -1,0 +1,13 @@
+0.0004   Hazlevel
+10 period index for the conditioning period
+Run_HazRefTest1.txt
+HazRefTest1_Site1.out6
+HazRefTest1_Site1.out3
+CMS_output.txt
+2  number of scenarios
+jType  mag,  rRup, rJB, Rx,  rSeismo, Ry0,  rHypo, dip, zTOR, theta_site, RupWidth,  hypoDep, vs30, Z1,     Z15,   Z25,    vs30_class, HWFlag, ftype, forearc   
+1      5.85  16.4  13.8 13.8 16.4     0.    16.4   90.  7.54  0.          5.1        7.5      760.  0.0481  0.250  0.6068  0           0       1      0
+1      6.77  50.1  50.1 50.0 50.1     0.75  51.4   90.  0.07  0.          11.9       6.0      760.  0.0481  0.250  0.6068  0           0       1      0
+
+
+
