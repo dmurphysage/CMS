@@ -16,7 +16,8 @@ c     Version 45.2, last modified 04/2017
      1        intflag(4,MAX_PROB), iScen, iInten, nProb, jProb, kType,
      2        nGM_model(MAX_PROB,MAX_ATTENTYPE), jType, iAtten, iPer2, 
      3        attenType(MAX_FLT), jCalc(MAX_PROB,4,MAX_ATTEN), nINten1, 
-     4        nInten(MAX_PROB)      
+     4        nInten(MAX_PROB), scalc(MAX_PROB,4,MAX_ATTEN), sigflag,
+     5        jcalc1, scalc1      
       real version, varAdd(MAX_PROB,4,MAX_ATTEN), period(MAX_PROB), ratio,
      1     lgInten, sigmaY, sum, sum1, sum2, wt_deagg(MAX_ATTENTYPE,MAX_ATTEN),
      2     hazLevel, haz_GMPE(MAX_INTEN), haz10, period1(4,MAX_PROB), tau, phi,
@@ -25,8 +26,8 @@ c     Version 45.2, last modified 04/2017
      5     zTOR, theta_site, RupWidth, testInten(MAX_PROB, MAX_INTEN),
      6     gmScale(MAX_PROB,4,MAX_ATTEN), gm_wt(MAX_PROB,4,MAX_ATTEN),
      7     cfcoefrrup(MAX_Atten,11), cfcoefrjb(MAX_Atten,11), med(MAX_PROB), 
-     8     sig(MAX_PROB)      
-      character*80 filein, file1, dummy, attenName(4,MAX_ATTEN)
+     8     sig(MAX_PROB), sigfix(MAX_PROB,4,MAX_ATTEN), sigfix1, temp      
+      character*80 filein, file1, dummy, attenName(4,MAX_ATTEN), sigmaName(4,MAX_ATTEN)
                   
       write (*,*) '******************************'
       write (*,*) '*      CMS Code for GMC      *'
@@ -44,8 +45,9 @@ c     Version 45.2, last modified 04/2017
 
 c     Read the hazard run file to get the logic tree weights for the GMPEs 
 c     and the testInten values
-      call RdInput (nInten, testInten, nGM_model, nattentype,attenType,
-     1               nProb, GM_wt, period, jCalc, gmscale, VarAdd, version)
+      call RdInput (nInten, testInten, nGM_model, nattentype, attenType,
+     1               nProb, gm_wt, period, jcalc, gmscale, varadd, version,
+     2               scalc, sigfix)
        
 c     Read the out6 file
       write (*,'( 2x,''reading logic tree file out6'')')
@@ -134,19 +136,47 @@ c        Write header for the scenario Med and Sigma
          do iAtten=1,nGM_Model(iPer2,jType)
 
           AR = 1.
+
+c         Check for negative jcalc values which will set the corresponding sigma to 
+c         either a fixed value or sigma from another model.
+          sigflag = 0
+          if (jcalc(iPer2,jType,iAtten) .lt. 0) then
+            jcalc1 = abs(jcalc(iPer2,jType,iAtten))
+            scalc1 = scalc(iPer2,jType,iAtten) 
+            sigfix1 = sigfix(iPer2,jType,iAtten)
+c           Check for either fixed sigma value (scalc1<0) or other sigma model
+            if (scalc1 .lt. 0) then
+              sigflag = 2
+            else
+              sigflag = 1
+            endif
+          else
+            jcalc1 = jcalc(iPer2,jType,iAtten) 
+          endif 
           
 c         Compute the median and sigma for this GMPE
-          call meanInten ( rRup, rJB, rSeismo,
-     1           HWFlag, mag, jcalc(iPer2,jType,iAtten), period(iPer2),  
-     2           lgInten,sigmaY, ftype, attenName, period1, 
-     3           iAtten, iPer2, jType, vs30, hypoDep, intflag, AR, dip,
-     4           rhypo, z1, z15, z25, tau,
-     5           zTOR, theta_site, RupWidth, vs30_class, forearc, Rx, phi,
-     6           cfcoefrrup, cfcoefrjb, Ry0 )
-
+          call meanInten ( rRup, rJB, rSeismo, HWFlag, mag, jcalc1, 
+     1           period(iPer2), lgInten, sigmaY, ftype, attenName, 
+     2           period1, iAtten, iPer2, jType, vs30, hypoDep, intflag, 
+     3           AR, dip, rhypo, z1, z15, z25, tau, zTOR, theta_site, 
+     4           RupWidth, vs30_class, forearc, Rx, phi,
+     5           cfcoefrrup, cfcoefrjb, Ry0 )
 
 c         Add epistemic uncertainty term (constant shift) to median
-          lgInten = lgInten + gmScale(iPer2,jType,iAtten)
+          lgInten = lgInten + gmscale(iPer2,jType,iAtten)
+
+C         Second call get GMPE for different sigma model 
+          if (sigflag .eq. 1) then
+            call meanInten ( rRup, rJB, rSeismo, HWFlag, mag, scalc1, 
+     1           period(iPer2), temp, sigmaY, ftype, sigmaName, 
+     2           period1, iAtten, iPer2, jType, vs30, hypoDep, intflag, 
+     3           AR, dip, rhypo, z1, z15, z25, tau, zTOR, theta_site, 
+     4           RupWidth, vs30_class, forearc, Rx, phi,
+     5           cfcoefrrup, cfcoefrjb, Ry0 )                  
+c         Check if a constant, user input sigma, is selected
+          else if (sigflag .eq. 2) then
+            sigmaY = sigfix1
+          endif
           
 c         Adjust the sigma
           sigmaY = sqrt(sigmaY*sigmaY + varadd(iPer2,jType,iAtten) )

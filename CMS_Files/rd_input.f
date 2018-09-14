@@ -1,18 +1,21 @@
 c -------------------------------------------------------------------------
 
       subroutine RdInput (nInten,  testInten, nGM_model, nattentype,
-     1 attenType, nProb, gm_wt, period, jcalc, gm_scale, varadd, version)
+     1           attenType, nProb, gm_wt, period, jcalc, gm_scale, varadd, 
+     2           version, scalc, sigfix)
 
       implicit none
       include 'cms.h'
 
       integer nProb, nattentype, nGM_Model(MAX_PROB,MAX_ATTENTYPE),
      1        nInten(MAX_PROB), attentype(MAX_FLT), iprob, dirflag, j, 
-     2        jj, iMix(MAX_PROB,4,MAX_ATTEN), jcalc(MAX_PROB,4,MAX_ATTEN)
+     2        jj, iMix(MAX_PROB,4,MAX_ATTEN), jcalc(MAX_PROB,4,MAX_ATTEN),
+     3        scalc(MAX_PROB,4,MAX_ATTEN) 
       real version, specT, sigtrunc, testInten(MAX_PROB,MAX_INTEN),
      1     minlat, maxlat, minlong, maxlong, maxdist, 
      2     gm_scale(MAX_PROB,4,MAX_ATTEN), varadd(MAX_PROB,4,MAX_ATTEN),
-     3     checkwt, c1, c2, gm_wt(MAX_PROB,4,MAX_ATTEN), period(MAX_PROB)
+     3     checkwt, c1, c2, gm_wt(MAX_PROB,4,MAX_ATTEN), period(MAX_PROB),
+     4     sigfix(MAX_PROB,4,MAX_ATTEN)
       character*80 filein, title
 
 c     For CMS, all we need is the logic tree weights for the GMPEs
@@ -54,7 +57,7 @@ c       Read period, maxeps dir flag and gm intensities
         call CheckDim ( nInten(iProb), MAX_INTEN, 'MAX_INTEN' )
         period(iProb) = specT
 
-c       Read in the suite of attenution models and wts for each attentype
+c       Read in the suite of attenuation models and wts for each attentype
         do j=1,nattentype
           checkwt = 0.0
           read (20,*,ERR=2006) nGM_model(iProb,j)
@@ -64,11 +67,12 @@ c         Check for Max number of attenuation model
 
           do jj=1,nGM_model(iProb,j)
             read (20,*,ERR=2007) jcalc(iProb,j,jj), c1, c2, gm_wt(iProb,j,jj), varadd(iProb,j,jj), iMix(iProb,j,jj)
+            if ( jcalc(iProb,j,jj) .lt. 0 ) then
+              backspace (20)
+              read (20,*,ERR=2007) jcalc(iProb,j,jj), c1, c2, gm_wt(iProb,j,jj), varadd(iProb,j,jj), iMix(iProb,j,jj),
+     1              sCalc(iProb,j,jj), sigfix(iProb,j,jj)
+            endif
             gm_scale(iProb,j,jj) = c1 + c2
-c            if ( jcalc(j,jj) .lt. 0 ) then
-c               backspace (20)
-c               read (20,*) jcalc(j,jj), c1, c2, wtgm(j,jj), varadd, sCalc(j,jj), sigfix(j,jj), sssCalc(j,jj)
-c            endif
           enddo
         enddo
 
