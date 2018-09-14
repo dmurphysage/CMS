@@ -59,7 +59,7 @@ c     for HAZ45 IO subroutine
 c     Read the hazard run file to get the logic tree weights for the GMPEs 
 c     and the testInten values
       call RdInput (nInten, testInten, nGM_model, nattentype,attenType,
-     1               nProb, GM_wt, period, jCalc, gm_scale, VarAdd, version)
+     1               nProb, GM_wt, period, jCalc, gmscale, VarAdd, version)
        
 c     Read the out6 file
       write (*,'( 2x,''reading logic tree file out6'')')
