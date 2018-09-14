@@ -19,8 +19,8 @@ c     open the out3 file
 
 c     Check for version compatibility with hazard code
         read (nRd,*) version
-         if (version .ne. 45.2) then
-           write (*,*) 'out3 from incompatible version of Haz45, use Haz45.2'
+         if (version .ne. 45.3 .and. version .ne. 45.2) then
+           write (*,*) 'out3 from incompatible version of Haz45, use Haz45.3 or Haz45.2'
            stop 99
          endif 
 c     Read the output 3 file, keeping the total hazard and the background 

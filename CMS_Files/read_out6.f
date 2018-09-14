@@ -23,8 +23,8 @@ c     Open output file
 
 c     Check for version compatibility with hazard code
         read (nwr,*) version
-         if (version .ne. 45.2) then
-           write (*,*) 'out6 from incompatible version of Haz45, use Haz45.2'
+         if (version .ne. 45.3 .and. version .ne. 45.2) then
+           write (*,*) 'out6 from incompatible version of Haz45, use Haz45.3 or Haz45.2'
            stop 99
          endif      
 

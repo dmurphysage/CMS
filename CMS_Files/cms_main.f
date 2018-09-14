@@ -1,10 +1,10 @@
       program CMS_Haz45
 
 c     This program will compute the conditional mean spectra for conditioning periods
-c     from PSHA runs. This version is compatible with the output files from Haz45.2
+c     from PSHA runs. This version is compatible with the output files from Haz45.3
 c     which only outputs the mean hazard code combined over all attenuation models. 
 
-c     Version 45.2, last modified 04/2017
+c     Version 45.3
 
       implicit none
       include 'cms.h'
@@ -30,9 +30,9 @@ c     Version 45.2, last modified 04/2017
       character*80 filein, file1, dummy, attenName(4,MAX_ATTEN), sigmaName(4,MAX_ATTEN)
                   
       write (*,*) '******************************'
-      write (*,*) '*      CMS Code for GMC      *'
-      write (*,*) '*  compatible with Haz45.2   *'
-      write (*,*) '*   Tagged April 10, 2017    *'
+      write (*,*) '*   CMS Code: Version 45.3   *'
+      write (*,*) '*      Under Development     *'
+      write (*,*) '*      September, 2018       *'
       write (*,*) '******************************'
 
       write (*,*) 'Enter the input filename.'
@@ -63,7 +63,7 @@ c     Open the output file
       read (31,'( a80)') file1
       open (50,file=file1,status='new')
       write (50,*) ' *** Output file from program CMS  *** '
-      write (50,*) '        *** Version 45.2 ***           '    
+      write (50,*) '        *** Version 45.3 ***           '    
       write (50,*) 
       write (50,'(a17,2x,a80)') ' Input filename: ', filein 
       write (50,*) 
