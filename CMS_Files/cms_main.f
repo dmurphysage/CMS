@@ -30,7 +30,7 @@ C     Version 45.2, last modified 04/2017
       integer iInten, nProb, jProb
       integer nGM_model(MAX_PROB,MAX_ATTENTYPE), jType, iAtten, kType
       
-      character*80 filein, file1, dummy, attenName(4,MAX_PROB)
+      character*80 filein, file1, dummy, attenName(4,MAX_ATTEN)
 
 c     for HAZ45 IO subroutine
       real testInten(MAX_PROB, MAX_INTEN)
