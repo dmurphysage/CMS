@@ -4,12 +4,14 @@
 
       implicit none
       include 'cms.h'
-      real period(MAX_PROB), med(MAX_PROB), sig(MAX_PROB), shape(MAX_PROB),UHS1(MAX_PROB)
-      real Tprime(MAX_PROB), T_max, T_min, c1, c2, c3, c4
-      real rho(MAX_PROB),epsilon_bar(MAX_PROB), UHS2(MAX_PROB), period5(MAX_PROB)
-      real Tstar, temp, epsilonstar, cms(MAX_PROB)
-      real pi, Tamp15,t1, Trockratio, Tstarprime, SaTstarprime, medTstarprime, sigTstarprime, eps_bar_TSP
-      integer iScen, nScenario, iPer2, nProb, iFlag, iPer, j, RefPt, i
+      
+      integer iScen, nScenario, iPer2, nProb, iFlag, iPer, i
+      real period(MAX_PROB), med(MAX_PROB), sig(MAX_PROB), Tstarprime, 
+     1     Tprime(MAX_PROB), T_max, T_min, c1, c2, c3, c4, rho(MAX_PROB),
+     2     epsilon_bar(MAX_PROB), UHS2(MAX_PROB), period5(MAX_PROB), Tstar, 
+     3     temp, epsilonstar, cms(MAX_PROB), pi, Tamp15, t1, Trockratio, 
+     4     shape(MAX_PROB), UHS1(MAX_PROB)
+
       pi =3.1415926
 
 c     Copy UHS to new array (this new one will be shifted)    

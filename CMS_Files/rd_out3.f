@@ -1,26 +1,23 @@
       subroutine RdOut3 ( UHS1, hazLevel ) 
-c      implicit none
+
+      implicit none
       include 'cms.h'
 
+      integer nRd, nFlt, nProb, nAmp(MAX_PROB), j, l, idum, iProb, 
+     1        iAtten, iAmp, k, testnum
+      real lat, long, version, hazLevel, segModelwt(MAX_FLT), al_segwt(MAX_FLT),
+     1     mindist(MAX_FLT), x, UHS1(MAX_PROB), HazTotal(MAX_PROB,MAX_INTEN), 
+     2     amp(MAX_PROB,MAX_INTEN), mBar(MAX_PROB,MAX_INTEN), dBar(MAX_PROB,MAX_INTEN),
+     3     Haz(MAX_PROB,MAX_INTEN,MAX_FLT), eBar(MAX_PROB,MAX_INTEN), testHaz 
       character*80 file1, dummy, fname(MAX_FLT)
-      integer nRd, nFlt, nProb, nAmp(MAX_PROB)
-      integer iProb, iAtten, iFlt, iAmp, k
-      real lat, long, version
-      real segModelwt(MAX_FLT),al_segwt(MAX_FLT),
-     1     mindist(MAX_FLT),Haz(MAX_PROB,MAX_INTEN,MAX_FLT)
-      real HazTotal(MAX_PROB,MAX_INTEN), amp(MAX_PROB,MAX_INTEN)
-      real mBar(MAX_PROB,MAX_INTEN), dBar(MAX_PROB,MAX_INTEN),
-     1  eBar(MAX_PROB,MAX_INTEN)
-      real testHaz, x, UHS1(MAX_PROB)
 
 c     open the out3 file
       read (31,'( a80)') file1 
       write (*,'( a80)') file1
-c      pause 'in out3' 
       nRd = 23
       open (nRd,file=file1,status='old')
 
-C     Check for version compatibility with hazard code
+c     Check for version compatibility with hazard code
         read (nRd,*) version
          if (version .ne. 45.2) then
            write (*,*) 'out3 from incompatible version of Haz45, use Haz45.2'
@@ -48,9 +45,6 @@ c     Read in the hazard curves for all periods in given Haz45 ouptut file.
             read (nRD,'( 15x,i5)')  iAtten
             read (nRD,*) nAmp(iProb)
             read (nRD,'( 61x,30f12.4)') (amp(iProb,k),k=1,nAmp(iProb))
-            
-c            write(*,*) amp(iProb,1)
-c            pause 'amp'
 
             do l=1,nFlt
                read (nRD,'( 2x,a38,2f6.3,f8.1,1x,30e12.4)') fname(l),
@@ -69,7 +63,6 @@ c            pause 'amp'
                read (nRD,'( a80)') dummy
             enddo
             
-
          enddo
          close (nRD)
 

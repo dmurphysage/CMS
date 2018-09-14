@@ -1,47 +1,33 @@
       program CMS_Haz45
 
-C     This program will compute the conditional mean spectra for conditioning periods
-C     from PSHA runs. This version is compatible with the output files from Haz45.2
+c     This program will compute the conditional mean spectra for conditioning periods
+c     from PSHA runs. This version is compatible with the output files from Haz45.2
 c     which only outputs the mean hazard code combined over all attenuation models. 
 
-C     Version 45.2, last modified 04/2017
+c     Version 45.2, last modified 04/2017
 
       implicit none
       include 'cms.h'
       
       real*8 haz(MAX_PROB, MAX_ATTENTYPE, MAX_ATTEN, MAX_INTEN)
       real*8 hazmean1(MAX_ATTENTYPE,MAX_INTEN)      
-      
-      real version
-      real gm_Scale(MAX_PROB,4,MAX_ATTEN), varAdd(MAX_PROB,4,MAX_ATTEN)
-      real period(MAX_PROB), ratio
-      real lgInten,sigmaY
-      real sum, sum1, sum2
-      real period1(4,MAX_PROB), tau, phi
-      real hazLevel, haz_GMPE(MAX_INTEN), haz10
-      real wt_deagg (MAX_ATTENTYPE,MAX_ATTEN)
-      real UHS1(MAX_PROB), epsilonstar,rho, epsilon_bar, CMS(MAX_PROB)
-      real rRup, rJB, rSeismo, rHypo, Rx, Ry0, mag,
-     1        ftype, vs30, hypoDep, AR, dip, Z1, Z15, Z25, zTOR, 
-     2        theta_site, RupWidth
 
-      integer iPer, nAttenType
-      integer  HWFlag, vs30_class, forearc, nScenario, intflag(4,MAX_PROB), iScen
-      integer iInten, nProb, jProb
-      integer nGM_model(MAX_PROB,MAX_ATTENTYPE), jType, iAtten, kType
-      
+      integer iPer, nAttenType, HWFlag, vs30_class, forearc, nScenario, 
+     1        intflag(4,MAX_PROB), iScen, iInten, nProb, jProb, kType,
+     2        nGM_model(MAX_PROB,MAX_ATTENTYPE), jType, iAtten, iPer2, 
+     3        attenType(MAX_FLT), jCalc(MAX_PROB,4,MAX_ATTEN), nINten1, 
+     4        nInten(MAX_PROB)      
+      real version, varAdd(MAX_PROB,4,MAX_ATTEN), period(MAX_PROB), ratio,
+     1     lgInten, sigmaY, sum, sum1, sum2, wt_deagg(MAX_ATTENTYPE,MAX_ATTEN),
+     2     hazLevel, haz_GMPE(MAX_INTEN), haz10, period1(4,MAX_PROB), tau, phi,
+     3     UHS1(MAX_PROB), epsilonstar, CMS(MAX_PROB), rRup, rJB, rSeismo, 
+     4     rHypo, Rx, Ry0, mag, ftype, vs30, hypoDep, AR, dip, Z1, Z15, Z25, 
+     5     zTOR, theta_site, RupWidth, testInten(MAX_PROB, MAX_INTEN),
+     6     gmScale(MAX_PROB,4,MAX_ATTEN), gm_wt(MAX_PROB,4,MAX_ATTEN),
+     7     cfcoefrrup(MAX_Atten,11), cfcoefrjb(MAX_Atten,11), med(MAX_PROB), 
+     8     sig(MAX_PROB)      
       character*80 filein, file1, dummy, attenName(4,MAX_ATTEN)
-
-c     for HAZ45 IO subroutine
-      real testInten(MAX_PROB, MAX_INTEN)
-      real gmScale(MAX_PROB,4,MAX_ATTEN), gm_wt(MAX_PROB,4,MAX_ATTEN) 
-      real cfcoefrrup(MAX_Atten,11), cfcoefrjb(MAX_Atten,11)
-      real period2(MAX_PROB), med(MAX_PROB), sig(MAX_PROB)
-      integer attenType(MAX_FLT), nInten(MAX_PROB)
-      integer jCalc(MAX_PROB,4,MAX_ATTEN)
-      integer iPer2, nINten1
-            
-      
+                  
       write (*,*) '******************************'
       write (*,*) '*      CMS Code for GMC      *'
       write (*,*) '*  compatible with Haz45.2   *'
@@ -129,8 +115,6 @@ c        Write out the deagg wts
      1          ratio, gm_wt(iPer,jType,iAtten), wt_deagg(jType,iAtten)
         enddo
        enddo
-
-
        
 c      Compute the median and sigma for each GMPE for each scenario
        read (31,*,err=3000) nScenario
@@ -181,7 +165,7 @@ c        Write the deagg-weighted median and sigma for the scenario
 c      Write header for the CMS_part1  
        write (50,'( /,''    Period    UHS       Med       Sigma     Tamp15    Eps*      Rho       Eps_bar   CMS '' )') 
 
-C      Compute the CMS   
+c      Compute the CMS   
           call calcCMS ( med, sig, period, UHS1, epsilonstar, CMS,
      1                   iPer2, iPer, iScen, nScenario, nProb )
        enddo
