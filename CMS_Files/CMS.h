@@ -6,7 +6,7 @@ c     Set array dimensions
      3        MAX_ATTEN, MAX_ATTENTYPE, MAX_BR, MAX_NODE
       integer MAX_Med, MAX_epistemic, MAX_sigma, MAX_SYN
 
-      PARAMETER ( MAX_SITE  = 1, MAX_FLT = 150, MAX_SEG  = 10,
+      PARAMETER ( MAX_SITE  = 1, MAX_FLT = 160, MAX_SEG  = 10,
      1            MAX_INTEN = 30, MAX_PROB = 20, MAX_DIP=5,
      2            MAXPARAM = 200, MAX_MAG=15, MAX_DIST=15,
      3            MAX_EPS=15, MAX_N1=150, MAX_Files=3, MAX_N2=6,MAX_Xcost=10,

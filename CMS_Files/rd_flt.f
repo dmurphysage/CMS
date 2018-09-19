@@ -1,49 +1,36 @@
 
-
- 
-      subroutine Rd_Fault_Data  (nFltTotal, nFlt0, f_start, f_num, AttenType, 
-     1           n_Dip, n_bValue, nActRate,  nSR,   nRecInt,   nMoRate,   nMagRecur,  
-     1           nThick1,      nRefMag,  nFtypeModels,
-     2           dipWt, bValueWt, actRateWt, wt_sr, wt_recInt, wt_MoRate, magRecurWt, 
-     2           faultThickWt, refMagWt, ftmodelwt,
-     3           nFtype, ftype_wt1, wt_RateMethod, al_Segwt, 
-     4           nRate, rateType, nBR_SSC, nSegModel1, segwt1, segFlag, indexRate)
+      subroutine Rd_Fault_Data (nFltTotal, nFlt0, f_start, f_num, AttenType, 
+     1           n_Dip, n_bValue, nActRate, nSR, nRecInt, nMoRate, nMagRecur,  
+     2           nThick1, nRefMag, nFtypeModels, dipWt, bValueWt, actRateWt, 
+     3           wt_sr, wt_recInt, wt_MoRate, magRecurWt, faultThickWt, 
+     4           refMagWt, ftmodelwt, nFtype, ftype_wt1, wt_RateMethod, al_Segwt, 
+     5           nRate, rateType, nBR_SSC, nSegModel1, segwt1, segFlag, indexRate)
 
       implicit none
       include 'cms.h'
-      integer nSegModel1(MAX_FLT), segFlag(MAX_FLT, MAX_SEG), iSeg
-      real segwt1 (MAX_FLT,MAX_SEG)
-
-      integer nFltTotal, nFlt0, f_start(MAX_FLT), f_num(MAX_FLT)
-      integer faultflag(MAX_FLT,MAX_SEG,MAX_FLT), nBR_SSC(MAX_FLT,MAX_BR)
-
-      integer nSegModel(MAX_FLT), n_Dip(MAX_FLT),n_bvalue(MAX_FLT), nActRate(MAX_FLT), 
-     1        nSR(MAX_FLT), nRecInt(MAX_FLT), nMoRate(MAX_FLT)
-      integer nMagRecur(MAX_FLT), nThick1(MAX_FLT), nRefMag(MAX_FLT,MAX_WIDTH), nFtypeModels(MAX_FLT)
-      integer Attentype(MAX_FLT)
-      integer nFtype(MAX_FLT,MAXPARAM), rateType(MAX_FLT,MAXPARAM), Nrate(MAX_FLT)
-      integer indexrate(MAX_FLT,4)
-
-      real al_segWt(MAX_FLT)
-
-      real segwt(MAX_FLT,MAX_FLT), dipWt(MAX_FLT,MAXPARAM), bValueWt(MAX_FLT,MAXPARAM), actRateWt(MAX_FLT,MAXPARAM), 
-     1     wt_SR(MAX_FLT,MAXPARAM), wt_RecInt(MAX_FLT,MAXPARAM), wt_MoRate(MAX_FLT,MAXPARAM), magRecurWt(MAX_FLT,MAXPARAM),    
-     1     faultWidthWt(MAX_FLT,MAXPARAM),  faultThickWt(MAX_FLT,MAXPARAM), 
-     2     refMagWt(MAX_FLT,MAX_Width,MAXPARAM), ftmodelwt(MAX_FLT,MAXPARAM)
-      real wt_rateMethod(MAX_FLT,4)
-
-      real ftype_wt1(MAX_FLt,MAXPARAM,5)
-      real ftype1(10,10)
-
-      integer iCoor, nFLT2, iFlt, iFlt2, nsyn, nfp, iDepthModel, iOverRideMag
-      integer iFLt0, k, i, isourceType, insyn, synflag, directflag, ipt, nDownDip, ii
-      integer iRecur, iThick, iThick1, iFM
+      
+      integer nSegModel1(MAX_FLT), segFlag(MAX_FLT, MAX_SEG), iSeg, nFlt0, 
+     1        nFltTotal, f_start(MAX_FLT), f_num(MAX_FLT), nSegModel(MAX_FLT), 
+     2        faultflag(MAX_FLT,MAX_SEG,MAX_FLT), nBR_SSC(MAX_FLT,MAX_BR),
+     3        n_Dip(MAX_FLT), n_bvalue(MAX_FLT), nActRate(MAX_FLT), iRecur, 
+     4        nSR(MAX_FLT), nRecInt(MAX_FLT), nMoRate(MAX_FLT), Nrate(MAX_FLT),
+     5        nMagRecur(MAX_FLT), nThick1(MAX_FLT), nRefMag(MAX_FLT,MAX_WIDTH), 
+     6        nFtypeModels(MAX_FLT), Attentype(MAX_FLT), indexrate(MAX_FLT,4),
+     7        nFtype(MAX_FLT,MAXPARAM), rateType(MAX_FLT,MAXPARAM), ii, iThick, 
+     8        iCoor, nFLT2, iFlt, iFlt2, nsyn, nfp, iDepthModel, iOverRideMag,
+     9        iFLt0, k, i, isourceType, insyn, synflag, directflag, ipt, nDownDip, 
+     1        iThick1, iFM
+      real segwt1 (MAX_FLT,MAX_SEG), al_segWt(MAX_FLT), segwt(MAX_FLT,MAX_FLT), 
+     1     dipWt(MAX_FLT,MAXPARAM), bValueWt(MAX_FLT,MAXPARAM), actRateWt(MAX_FLT,MAXPARAM), 
+     2     wt_SR(MAX_FLT,MAXPARAM), wt_RecInt(MAX_FLT,MAXPARAM), wt_MoRate(MAX_FLT,MAXPARAM), 
+     3     magRecurWt(MAX_FLT,MAXPARAM), faultThickWt(MAX_FLT,MAXPARAM), probAct0, 
+     4     refMagWt(MAX_FLT,MAX_Width,MAXPARAM), ftmodelwt(MAX_FLT,MAXPARAM),
+     5     wt_rateMethod(MAX_FLT,4), ftype_wt1(MAX_FLt,MAXPARAM,5), ftype1(10,10),
+     6     flat, flong, fz, sampleStep, minmag, sigArea, sigWidth, magsyn, dip1, 
+     7     top, x(100), x2(100,100), bValue2, actRate 
       character*80 fName1, fName 
-      real flat, flong, fz, sampleStep, minmag, sigArea, sigWidth
-      real probAct0, magsyn, dip1, top, x(100), x2(100,100) 
-      real bValue2, actRate
 
-C     Input Fault Parameters
+c     Input Fault Parameters
       read (10,*) iCoor
       read (10,*) NFLT0
 
@@ -51,7 +38,7 @@ C     Input Fault Parameters
   
       iflt = 0
 
-C.....Loop over each fault in the source file....
+c     Loop over each fault in the source file....
       DO iFlt0=1,NFLT0
         read (10,'( a80)') fName1
         read (10,*) probAct0
@@ -71,7 +58,7 @@ c       This allows us to find the right fault from the large list
         f_start(iFlt0) = iFlt + 1
         f_num(iFlt0) = nFlt2 
 
-C.......Loop over number of individual fault segments....                        
+c       Loop over number of individual fault segments....                        
         do iflt2=1,nflt2
 
           iFlt = iFlt + 1
@@ -126,7 +113,7 @@ c           Read over grid filename...
 c         Check for custom fault source
           if ( isourceType .eq. 5) then
             read(10,*) nDownDip, nfp
-c........   Only read in the first downdip case - rest is not needed...
+c           Only read in the first downdip case - rest is not needed...
             do ipt=1,nfp
               read (10,*) fLong, fLat, fZ
             enddo
@@ -210,8 +197,6 @@ c         Read moment-rates
           indexRate(iFlt,2) = indexRate(iFlt,1) + nSR(iFlt)
           indexrate(iFlt,3) = indexRate(iFlt,2) + nActRate(iFlt)
           indexrate(iFlt,4) = indexRate(iFlt,3) + nRecInt(iFlt)
-
-
                                    
 c         Read Mag recurrence weights (char and exp)
           read (10,*) nMagRecur(iFlt)

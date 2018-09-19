@@ -1,17 +1,16 @@
 c -------------------------------------------------------------------
 
       subroutine read_logichaz_out6 ( haz, nProb, nattenType, nAtten, nInten)
+     
       implicit none
       include 'cms.h'
 
-
       real*8 haz(MAX_PROB, MAX_ATTENTYPE, MAX_ATTEN, MAX_INTEN)
+      integer nInten, nProb, nattenType, nAtten(MAX_PROB,MAX_ATTENTYPE),
+     1        iProb, jType, iAtten, iProb1, jType1, iAtten1, j, nwr
       real version
-      integer nInten, nProb, nattenType, nAtten(MAX_PROB,MAX_ATTENTYPE)
-      integer iProb, jType, iAtten
-      integer iProb1, jType1, iAtten1
-      integer j, nwr, ifile
       character*80 file1
+      
       nwr = 12
                      
 c     Open output file
@@ -22,10 +21,10 @@ c     Open output file
       write (*,*) file1
       open (nwr,file=file1,status='old',ERR=2000)
 
-C     Check for version compatibility with hazard code
+c     Check for version compatibility with hazard code
         read (nwr,*) version
-         if (version .ne. 45.2) then
-           write (*,*) 'out6 from incompatible version of Haz45, use Haz45.2'
+         if (version .ne. 45.3 .and. version .ne. 45.2) then
+           write (*,*) 'out6 from incompatible version of Haz45, use Haz45.3 or Haz45.2'
            stop 99
          endif      
 
